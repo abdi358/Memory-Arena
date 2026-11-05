@@ -47,7 +47,7 @@ fun MemoryCardView(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSunlightMode: Boolean = false,
-    iconSize: Dp = 28.dp
+    iconSize: Dp = 56.dp
 ) {
     val rotation by animateFloatAsState(
         targetValue = if (card.isFaceUp || card.isMatched) 180f else 0f,
@@ -121,7 +121,7 @@ fun MemoryCardView(
 @Composable
 private fun CardBack(isSunlightMode: Boolean) {
     if (isSunlightMode) {
-        // High-contrast deep navy back with crisp cyan/white emblem for sunlight visibility
+        // High-contrast deep navy back with doubled crisp cyan/white emblem for sunlight visibility
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -130,22 +130,22 @@ private fun CardBack(isSunlightMode: Boolean) {
         ) {
             Box(
                 modifier = Modifier
-                    .size(28.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp))
                     .background(Color(0xFF0F172A))
-                    .border(1.dp, Color(0xFF38BDF8).copy(alpha = 0.4f), RoundedCornerShape(8.dp)),
+                    .border(1.5.dp, Color(0xFF38BDF8).copy(alpha = 0.5f), RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Filled.Psychology,
                     contentDescription = null,
                     tint = Color(0xFF38BDF8),
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }
     } else {
-        // Neon Cyberpunk Dark Theme Back
+        // Neon Cyberpunk Dark Theme Back (Doubled Center Emblem)
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -161,19 +161,19 @@ private fun CardBack(isSunlightMode: Boolean) {
         ) {
             Box(
                 modifier = Modifier
-                    .size(26.dp)
-                .clip(RoundedCornerShape(7.dp))
-                .background(Color.White.copy(alpha = 0.04f))
-                .border(1.dp, Color.White.copy(alpha = 0.07f), RoundedCornerShape(7.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Psychology,
-                contentDescription = null,
-                tint = ArenaPrimary.copy(alpha = 0.45f),
-                modifier = Modifier.size(17.dp)
-            )
-        }
+                    .size(46.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White.copy(alpha = 0.05f))
+                    .border(1.2.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(12.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Psychology,
+                    contentDescription = null,
+                    tint = ArenaPrimary.copy(alpha = 0.55f),
+                    modifier = Modifier.size(32.dp)
+                )
+            }
         }
     }
 }
@@ -182,7 +182,7 @@ private fun CardBack(isSunlightMode: Boolean) {
 private fun CardFront(
     card: MemoryCard,
     isSunlightMode: Boolean,
-    iconSize: Dp = 28.dp
+    iconSize: Dp = 56.dp
 ) {
     val fallbackAura = if (isSunlightMode) SunPlayerBlue else ArenaSecondary
     val auraColor = card.matchedByColor ?: fallbackAura

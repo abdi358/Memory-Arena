@@ -423,7 +423,7 @@ fun MemoryArenaGameScreen(
                         card = card,
                         onClick = { onCardClick(card) },
                         isSunlightMode = isSunlightMode,
-                        iconSize = if (playerCount == 4) 22.dp else 28.dp
+                        iconSize = if (playerCount == 4) 44.dp else 56.dp
                     )
                 }
             }
