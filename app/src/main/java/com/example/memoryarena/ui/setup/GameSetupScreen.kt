@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Nightlight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -138,34 +137,9 @@ fun GameSetupScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // ══════════════════════════════════════════════════════════════════
-            // HEADER & LOGO
+            // HEADER
             // ══════════════════════════════════════════════════════════════════
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Box(
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (isSunlightMode) SunPlayerBlue.copy(alpha = 0.15f)
-                        else ArenaPrimary.copy(alpha = 0.2f)
-                    )
-                    .border(
-                        2.dp,
-                        if (isSunlightMode) SunPlayerBlue else ArenaPrimary,
-                        CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Psychology,
-                    contentDescription = null,
-                    tint = if (isSunlightMode) SunPlayerBlue else ArenaPrimary,
-                    modifier = Modifier.size(34.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = "MEMORY ARENA",
