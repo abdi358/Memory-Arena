@@ -2,6 +2,7 @@ package com.example.memoryarena
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
@@ -54,6 +55,12 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     is AppScreen.Game -> {
+                        BackHandler {
+                            currentScreen = AppScreen.Setup(
+                                playerCount = screen.playerCount,
+                                isSunlightMode = screen.isSunlightMode
+                            )
+                        }
                         MemoryArenaGameScreen(
                             playerCount = screen.playerCount,
                             playerNames = screen.playerNames,

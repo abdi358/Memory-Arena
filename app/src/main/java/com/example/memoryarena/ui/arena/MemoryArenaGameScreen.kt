@@ -1,5 +1,6 @@
 package com.example.memoryarena.ui.arena
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -79,13 +80,24 @@ import com.example.memoryarena.ui.theme.SunSurfaceContainer
 import com.example.memoryarena.ui.theme.SunSurfaceHigh
 import kotlinx.coroutines.delay
 
-@Preview(showBackground = true, widthDp = 390, heightDp = 844)
+@Preview(name = "4-Player Tabletop", showBackground = true, widthDp = 390, heightDp = 844)
 @Composable
 fun MemoryArenaGameScreenPreview() {
     MemoryArenaTheme {
         MemoryArenaGameScreen(
             playerCount = 4,
             playerNames = listOf("Alex", "Maya", "Leo", "Zoe")
+        )
+    }
+}
+
+@Preview(name = "1-Player Solo", showBackground = true, widthDp = 390, heightDp = 844)
+@Composable
+fun MemoryArenaSoloGameScreenPreview() {
+    MemoryArenaTheme {
+        MemoryArenaGameScreen(
+            playerCount = 1,
+            playerNames = listOf("Alex")
         )
     }
 }
@@ -98,6 +110,11 @@ fun MemoryArenaGameScreen(
     onExitToSetup: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    // Intercept hardware/system back button to return to setup screen instead of exiting app
+    BackHandler {
+        onExitToSetup()
+    }
+
     var isSunlightMode by remember { mutableStateOf(initialSunlightMode) }
 
     // Players state with dynamic aura updating when toggling sun mode
@@ -299,18 +316,20 @@ fun MemoryArenaGameScreen(
                 .align(Alignment.TopCenter)
                 .fillMaxWidth()
                 .padding(horizontal = 10.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = if (playerCount == 1) Arrangement.Center else Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // TOP-LEFT CORNER: Player 1 (Alex / P1)
-            PlayerCornerPod(
-                player = players[0],
-                isActive = activePlayerIndex == 0,
-                turnProgress = if (activePlayerIndex == 0) turnProgress else 1f,
-                isLeader = (players[0].score == maxScore && maxScore > 0),
-                position = CornerPosition.TOP_LEFT,
-                isSunlightMode = isSunlightMode
-            )
+            // TOP-LEFT CORNER: Player 1 (Alex / P1) - Only shown in multi-player (in solo mode P1 is at bottom center)
+            if (playerCount > 1) {
+                PlayerCornerPod(
+                    player = players[0],
+                    isActive = activePlayerIndex == 0,
+                    turnProgress = if (activePlayerIndex == 0) turnProgress else 1f,
+                    isLeader = (players[0].score == maxScore && maxScore > 0),
+                    position = CornerPosition.TOP_LEFT,
+                    isSunlightMode = isSunlightMode
+                )
+            }
 
             // Center Quick HUD: Sun/Night Toggle, Restart (Compact 2-icon pill to keep player pods full-size)
             Row(
@@ -359,7 +378,7 @@ fun MemoryArenaGameScreen(
                     position = CornerPosition.TOP_RIGHT,
                     isSunlightMode = isSunlightMode
                 )
-            } else {
+            } else if (playerCount > 1) {
                 Spacer(modifier = Modifier.size(40.dp))
             }
         }
@@ -481,55 +500,74 @@ fun MemoryArenaGameScreen(
         }
 
         // ════════════════════════════════════════════════════════════════════════
-        // 3. BOTTOM BAR: BOTTOM-LEFT POD | SPACER | BOTTOM-RIGHT POD
+        // 3. BOTTOM BAR: BOTTOM-LEFT POD | SPACER | BOTTOM-RIGHT POD (OR BOTTOM-CENTER FOR 1 PLAYER)
         // ════════════════════════════════════════════════════════════════════════
-        Row(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
-        ) {
-            // BOTTOM-LEFT CORNER: Player 3 in 4-Player mode
-            if (playerCount == 4) {
+        if (playerCount == 1) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                contentAlignment = Alignment.BottomCenter
+            ) {
                 PlayerCornerPod(
-                    player = players[2],
-                    isActive = activePlayerIndex == 2,
-                    turnProgress = if (activePlayerIndex == 2) turnProgress else 1f,
-                    isLeader = (players[2].score == maxScore && maxScore > 0),
-                    position = CornerPosition.BOTTOM_LEFT,
+                    player = players[0],
+                    isActive = activePlayerIndex == 0,
+                    turnProgress = if (activePlayerIndex == 0) turnProgress else 1f,
+                    isLeader = false,
+                    position = CornerPosition.BOTTOM_CENTER,
                     isSunlightMode = isSunlightMode
                 )
-            } else {
-                Spacer(modifier = Modifier.size(40.dp))
             }
-
-            // BOTTOM-RIGHT CORNER:
-            // In 2P mode: Player 2 (Maya) sits here (diagonal surround)
-            // In 3P mode: Player 3 sits here
-            // In 4P mode: Player 4 (Zoe) sits here
-            val bottomTrailingPlayer = when (playerCount) {
-                2 -> players.getOrNull(1)
-                3 -> players.getOrNull(2)
-                4 -> players.getOrNull(3)
-                else -> null
-            }
-
-            if (bottomTrailingPlayer != null) {
-                val trailingIndex = when (playerCount) {
-                    2 -> 1
-                    3 -> 2
-                    else -> 3
+        } else {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                // BOTTOM-LEFT CORNER: Player 3 in 4-Player mode
+                if (playerCount == 4) {
+                    PlayerCornerPod(
+                        player = players[2],
+                        isActive = activePlayerIndex == 2,
+                        turnProgress = if (activePlayerIndex == 2) turnProgress else 1f,
+                        isLeader = (players[2].score == maxScore && maxScore > 0),
+                        position = CornerPosition.BOTTOM_LEFT,
+                        isSunlightMode = isSunlightMode
+                    )
+                } else {
+                    Spacer(modifier = Modifier.size(40.dp))
                 }
-                PlayerCornerPod(
-                    player = bottomTrailingPlayer,
-                    isActive = activePlayerIndex == trailingIndex,
-                    turnProgress = if (activePlayerIndex == trailingIndex) turnProgress else 1f,
-                    isLeader = (bottomTrailingPlayer.score == maxScore && maxScore > 0),
-                    position = CornerPosition.BOTTOM_RIGHT,
-                    isSunlightMode = isSunlightMode
-                )
+
+                // BOTTOM-RIGHT CORNER:
+                // In 2P mode: Player 2 (Maya) sits here (diagonal surround)
+                // In 3P mode: Player 3 sits here
+                // In 4P mode: Player 4 (Zoe) sits here
+                val bottomTrailingPlayer = when (playerCount) {
+                    2 -> players.getOrNull(1)
+                    3 -> players.getOrNull(2)
+                    4 -> players.getOrNull(3)
+                    else -> null
+                }
+
+                if (bottomTrailingPlayer != null) {
+                    val trailingIndex = when (playerCount) {
+                        2 -> 1
+                        3 -> 2
+                        else -> 3
+                    }
+                    PlayerCornerPod(
+                        player = bottomTrailingPlayer,
+                        isActive = activePlayerIndex == trailingIndex,
+                        turnProgress = if (activePlayerIndex == trailingIndex) turnProgress else 1f,
+                        isLeader = (bottomTrailingPlayer.score == maxScore && maxScore > 0),
+                        position = CornerPosition.BOTTOM_RIGHT,
+                        isSunlightMode = isSunlightMode
+                    )
+                }
             }
         }
 
