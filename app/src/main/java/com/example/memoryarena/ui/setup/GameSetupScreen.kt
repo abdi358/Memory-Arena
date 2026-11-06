@@ -225,8 +225,8 @@ fun GameSetupScreen(
                         text = when (selectedCount) {
                             1 -> "🎮 1 Player Solo: Practice memorization against the clock (16 cards, 4x4)."
                             2 -> "⚔️ 2 Players 1v1: Diagonal surround battle (16 cards, 4x4)."
-                            3 -> "⚡ 3 Players Clash: 3-way arena showdown (16 cards, 4x4)."
-                            else -> "🔥 4 Players Tabletop: Full 4-corner arena with 2 extra rows (24 cards, 4x6)!"
+                            3 -> "⚡ 3 Players Clash: 3-way arena showdown with 5 rows (20 cards, 4x5)!"
+                            else -> "🔥 4 Players Tabletop: Full 4-corner arena with 6 rows (24 cards, 4x6)!"
                         },
                         fontSize = 11.sp,
                         color = textSecondary,

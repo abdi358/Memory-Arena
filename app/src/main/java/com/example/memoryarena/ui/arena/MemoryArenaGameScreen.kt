@@ -91,6 +91,17 @@ fun MemoryArenaGameScreenPreview() {
     }
 }
 
+@Preview(name = "3-Player Trio (5 Rows)", showBackground = true, widthDp = 390, heightDp = 844)
+@Composable
+fun MemoryArenaTrioGameScreenPreview() {
+    MemoryArenaTheme {
+        MemoryArenaGameScreen(
+            playerCount = 3,
+            playerNames = listOf("Alex", "Maya", "Leo")
+        )
+    }
+}
+
 @Preview(name = "1-Player Solo", showBackground = true, widthDp = 390, heightDp = 844)
 @Composable
 fun MemoryArenaSoloGameScreenPreview() {
@@ -145,9 +156,14 @@ fun MemoryArenaGameScreen(
     var isTimerRunning by remember { mutableStateOf(true) }
 
     // Card Deck setup:
-    // 4 Players: 12 pairs = 24 cards (6 rows x 4 columns, adding two rows!)
-    // 1P, 2P, 3P: 8 pairs = 16 cards (4 rows x 4 columns)
-    val pairCount = if (playerCount == 4) 12 else 8
+    // 4 Players: 12 pairs = 24 cards (6 rows x 4 columns)
+    // 3 Players: 10 pairs = 20 cards (5 rows x 4 columns)
+    // 1P, 2P: 8 pairs = 16 cards (4 rows x 4 columns)
+    val pairCount = when (playerCount) {
+        4 -> 12
+        3 -> 10
+        else -> 8
+    }
     var cards by remember(playerCount) {
         mutableStateOf(generateDeck(pairCount))
     }
@@ -390,7 +406,7 @@ fun MemoryArenaGameScreen(
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth()
-                .padding(horizontal = if (playerCount == 4) 10.dp else 14.dp),
+                .padding(horizontal = if (playerCount >= 3) 10.dp else 14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -425,16 +441,16 @@ fun MemoryArenaGameScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(if (playerCount == 4) 6.dp else 10.dp))
+            Spacer(modifier = Modifier.height(if (playerCount >= 3) 6.dp else 10.dp))
 
-            // Playable 4x4 (16 cards) or 4x6 (24 cards) Grid in Center
+            // Playable 4x4 (16 cards for 1P/2P), 4x5 (20 cards for 3P), or 4x6 (24 cards for 4P) Grid in Center
             LazyVerticalGrid(
                 columns = GridCells.Fixed(4),
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                horizontalArrangement = Arrangement.spacedBy(if (playerCount == 4) 6.dp else 8.dp),
-                verticalArrangement = Arrangement.spacedBy(if (playerCount == 4) 6.dp else 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(if (playerCount >= 3) 6.dp else 8.dp),
+                verticalArrangement = Arrangement.spacedBy(if (playerCount >= 3) 6.dp else 8.dp),
                 contentPadding = PaddingValues(2.dp)
             ) {
                 items(cards, key = { it.id }) { card ->
@@ -442,12 +458,12 @@ fun MemoryArenaGameScreen(
                         card = card,
                         onClick = { onCardClick(card) },
                         isSunlightMode = isSunlightMode,
-                        iconSize = if (playerCount == 4) 44.dp else 56.dp
+                        iconSize = if (playerCount >= 3) 44.dp else 56.dp
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(if (playerCount == 4) 6.dp else 10.dp))
+            Spacer(modifier = Modifier.height(if (playerCount >= 3) 6.dp else 10.dp))
 
             // Live Telemetry Chip (Centered below Grid)
             Box(
